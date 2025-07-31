@@ -9,6 +9,7 @@ Version: 1.1.0
 
 import sys
 import os
+import subprocess
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.base_hardening import BaseHardeningTool
@@ -64,7 +65,7 @@ class Step2_UserSSHHardening(BaseHardeningTool):
                 # Check if user already exists
                 returncode, _, _ = self.run_command(f"id {username}", check=False)
                 if returncode == 0:
-                    self.logger.info(f"User {username} already exists, updating groups...")
+                    self.logger.info(f"User {username} already exists, updating configuration...")
                 else:
                     # Create user
                     returncode, _, stderr = self.run_command(f"adduser --disabled-password --gecos '{description}' {username}")
@@ -72,17 +73,31 @@ class Step2_UserSSHHardening(BaseHardeningTool):
                         self.logger.error(f"Failed to create user {username}: {stderr}")
                         return False
                     self.logger.info(f"Created user: {username}")
-                    
-                    # Set up password if specified in config
-                    if user_info.get("password"):
-                        password = user_info["password"]
-                        returncode, _, stderr = self.run_command(f"echo '{username}:{password}' | chpasswd")
-                        if returncode != 0:
+                
+                # Set up password if specified in config (for both new and existing users)
+                if user_info.get("password"):
+                    password = user_info["password"]
+                    # Use a more secure method to set password
+                    try:
+                        # Use subprocess with input to securely pass password
+                        process = subprocess.Popen(
+                            ['chpasswd'],
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True
+                        )
+                        stdout, stderr = process.communicate(input=f"{username}:{password}")
+                        
+                        if process.returncode != 0:
                             self.logger.error(f"Failed to set password for {username}: {stderr}")
                             return False
                         self.logger.info(f"Password set for user: {username}")
-                    else:
-                        self.logger.info(f"No password specified for {username} - using key-based authentication only")
+                    except Exception as e:
+                        self.logger.error(f"Error setting password for {username}: {e}")
+                        return False
+                else:
+                    self.logger.info(f"No password specified for {username} - using key-based authentication only")
                 
                 # Add user to groups
                 for group in groups:
