@@ -369,8 +369,9 @@ make clean
 
 - **User Management**: Create system user accounts (outsight, cableman, admin)
 - **Group Assignment**: Proper sudo and regular user group assignments
-- **SSH Hardening**: Comprehensive SSH security configuration
+- **SSH Hardening**: Comprehensive SSH security configuration (key-based authentication only)
 - **Access Control**: SSH user restrictions and login banner
+- **Password Security**: Users are created with disabled passwords - set manually if needed using `sudo passwd <username>`
 
 ### Step 3: Firewall and Network Security ✅
 **CIS Controls**: 3.1.x, 3.2.x, 3.3.x, 3.4.x, 3.5.x
