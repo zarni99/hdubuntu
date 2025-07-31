@@ -22,6 +22,12 @@
     "apply_sysctl": true,
     "verify_sysctl": true
   },
+  "step5": {
+    "install_auditd": true,
+    "configure_auditd": true,
+    "configure_rsyslog": true,
+    "enable_services": true
+  },
   "users": [
     {
       "username": "outsight",
@@ -163,6 +169,16 @@
       "fs.protected_hardlinks": "1",
       "fs.protected_symlinks": "1"
     }
+  },
+  "auditd": {
+    "max_log_file": "100",
+    "num_logs": "5",
+    "space_left_action": "email",
+    "action_mail_acct": "root",
+    "admin_space_left_action": "halt",
+    "max_log_file_action": "rotate",
+    "disk_full_action": "halt",
+    "disk_error_action": "halt"
   },
   "cis_profile": "Level 1 - Server",
   "organization": "CAG/Changi Airport Group",

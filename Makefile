@@ -1,7 +1,7 @@
 # Ubuntu Server Hardening Tool - Makefile
 # CIS Benchmark Compliance Tool for Ubuntu 22.04 LTS
 
-.PHONY: help install test clean demo step1 step2 step3 step4 all-steps dry-run
+.PHONY: help install test clean demo step1 step2 step3 step4 step5 all-steps dry-run verify
 
 # Default target
 help:
@@ -16,8 +16,10 @@ help:
 	@echo "  make step2       - Run Step 2: User & SSH Hardening (requires sudo)"
 	@echo "  make step3       - Run Step 3: Firewall & Network Security (requires sudo)"
 	@echo "  make step4       - Run Step 4: Kernel & Sysctl Hardening (requires sudo)"
+	@echo "  make step5       - Run Step 5: Auditing & Logging (requires sudo)"
 	@echo "  make all-steps   - Run all hardening steps (requires sudo)"
 	@echo "  make dry-run     - Preview all changes without executing"
+	@echo "  make verify      - Verify all hardening measures are applied"
 	@echo ""
 	@echo "  make help        - Show this help message"
 
@@ -33,7 +35,7 @@ install:
 # Run tests and validation
 test:
 	@echo "Running tool validation..."
-	@python3 -c "import sys; sys.path.append('src'); from hardening_steps import Step1_OSHardening, Step2_UserSSHHardening, Step3_NetworkSecurity, Step4_KernelSysctlHardening; print('✓ All modules imported successfully')"
+	@python3 -c "import sys; sys.path.append('src'); from hardening_steps import Step1_OSHardening, Step2_UserSSHHardening, Step3_NetworkSecurity, Step4_KernelSysctlHardening, Step5_AuditingLogging; print('✓ All modules imported successfully')"
 	@./hardening_tool.py --help > /dev/null && echo "✓ Main script is functional"
 	@echo "✓ All tests passed!"
 
@@ -45,6 +47,8 @@ demo:
 	@./demos/step2_demo.sh
 	@echo ""
 	@./demos/step4_demo.sh
+	@echo ""
+	@./demos/step5_demo.sh
 	@echo ""
 	@./demos/modular_demo.sh
 
@@ -77,15 +81,25 @@ step4:
 	@echo "Running Step 4: Kernel and Sysctl Hardening..."
 	@sudo ./hardening_tool.py --step4
 
+# Run Step 5: Auditing & Logging (requires sudo)
+step5:
+	@echo "Running Step 5: Auditing and Logging..."
+	@sudo ./hardening_tool.py --step5
+
 # Run all hardening steps (requires sudo)
 all-steps:
 	@echo "Running all hardening steps..."
-	@sudo ./hardening_tool.py --step1 --step2 --step3 --step4
+	@sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --step5
 
 # Preview all changes without executing
 dry-run:
 	@echo "Previewing all hardening changes (dry-run mode)..."
-	@./hardening_tool.py --step1 --step2 --step3 --step4 --dry-run --log-level INFO
+	@./hardening_tool.py --step1 --step2 --step3 --step4 --step5 --dry-run --log-level INFO
+
+# Verify all hardening measures are applied
+verify:
+	@echo "Verifying all hardening measures..."
+	@./verify_hardening.sh
 
 # Development targets
 dev-setup:
