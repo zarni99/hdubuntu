@@ -74,7 +74,7 @@ echo "STEP 1: OPERATING SYSTEM HARDENING VERIFICATION"
 echo "============================================================"
 
 # Check if system is updated
-check_status "System packages are up to date" "apt list --upgradable 2>/dev/null | grep -q 'WARNING: apt does not have a stable CLI interface'" "success"
+check_status "System packages are up to date" "apt list --upgradable 2>/dev/null | grep -v 'WARNING:' | grep -q 'upgradable'" "fail"
 
 # Check unattended upgrades
 check_config "Unattended upgrades enabled" "/etc/apt/apt.conf.d/50unattended-upgrades" "Unattended-Upgrade::Automatic-Reboot"
