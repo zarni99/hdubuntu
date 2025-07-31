@@ -174,14 +174,14 @@ class Step3_NetworkSecurity(BaseHardeningTool):
             self.logger.error(f"❌ Error configuring K3s ports: {e}")
             return False
 
-    def configure_outsight_ports(self):
-        """Configure Outsight solution specific ports"""
-        self.logger.info("Configuring Outsight solution specific ports...")
+    def configure_application_ports(self):
+        """Configure application specific ports"""
+        self.logger.info("Configuring application specific ports...")
         
         try:
-            outsight_ports = self.firewall_config.get('outsight_ports', [])
+            application_ports = self.firewall_config.get('application_ports', [])
             
-            for port_config in outsight_ports:
+            for port_config in application_ports:
                 port = port_config['port']
                 protocol = port_config.get('protocol', 'tcp')
                 description = port_config.get('description', '')
@@ -193,11 +193,11 @@ class Step3_NetworkSecurity(BaseHardeningTool):
                     self.logger.error(f"❌ Failed to allow {port}/{protocol}")
                     return False
             
-            self.logger.info("✅ Outsight ports configured successfully")
+            self.logger.info("✅ Application ports configured successfully")
             return True
             
         except Exception as e:
-            self.logger.error(f"❌ Error configuring Outsight ports: {e}")
+            self.logger.error(f"❌ Error configuring application ports: {e}")
             return False
 
     def enable_ufw(self):
@@ -321,7 +321,7 @@ class Step3_NetworkSecurity(BaseHardeningTool):
                 success = False
             
             # Configure Outsight specific ports
-            if success and not self.configure_outsight_ports():
+            if success and not self.configure_application_ports():
                 success = False
             
             # Enable UFW

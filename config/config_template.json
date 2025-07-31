@@ -30,22 +30,22 @@
   },
   "users": [
     {
-      "username": "outsight",
+      "username": "admin1",
       "groups": ["sudo"],
-      "description": "Install and configure software stack, Level 3 troubleshooting"
+      "description": "System administrator with sudo privileges"
     },
     {
-      "username": "cableman",
+      "username": "admin2",
       "groups": ["sudo"],
-      "description": "Server installation & administration, security update, audit, Level 1&2 troubleshooting"
+      "description": "System administrator with sudo privileges"
     },
     {
-      "username": "cag",
+      "username": "admin3",
       "groups": [],
-      "description": "Audit user"
+      "description": "Standard user account"
     }
   ],
-  "ssh_allowed_users": ["outsight", "cableman", "cag"],
+  "ssh_allowed_users": ["admin1", "admin2", "admin3"],
   "firewall": {
     "default_incoming": "deny",
     "default_outgoing": "allow",
@@ -78,76 +78,76 @@
         "description": "Kubelet metrics"
       }
     ],
-    "outsight_ports": [
+    "application_ports": [
       {
         "port": "80",
         "protocol": "tcp",
-        "description": "Outsight Shift HTTP"
+        "description": "HTTP web service"
       },
       {
         "port": "443",
         "protocol": "tcp",
-        "description": "Outsight Shift HTTPS"
+        "description": "HTTPS web service"
       },
       {
         "port": "2379:2380",
         "protocol": "tcp",
-        "description": "HA configuration database"
+        "description": "Database cluster"
       },
       {
         "port": "5001",
         "protocol": "tcp",
-        "description": "Embedded distributed registry"
+        "description": "Application registry"
       },
       {
         "port": "5000",
         "protocol": "tcp",
-        "description": "Software monitoring"
+        "description": "Application monitoring"
       },
       {
         "port": "53",
         "protocol": "udp",
-        "description": "Core DNS"
+        "description": "DNS service"
       },
       {
         "port": "11100:11130",
         "protocol": "tcp",
-        "description": "Tracking data stream"
+        "description": "Data stream service"
       },
       {
         "port": "9090",
         "protocol": "tcp",
-        "description": "Software monitoring"
+        "description": "Monitoring service"
       },
       {
         "port": "9091",
         "protocol": "tcp",
-        "description": "Software monitoring"
+        "description": "Monitoring service"
       },
       {
         "port": "9273",
         "protocol": "tcp",
-        "description": "Software monitoring"
+        "description": "Metrics service"
       },
       {
         "port": "10050",
         "protocol": "tcp",
-        "description": "Hardware monitoring"
+        "description": "System monitoring"
       },
       {
         "port": "10051",
         "protocol": "tcp",
-        "description": "Hardware monitoring"
+        "description": "System monitoring"
       },
       {
         "port": "5672",
         "protocol": "tcp",
-        "description": "Internal message queues"
+        "description": "Message queue service"
       },
       {
         "port": "15672",
         "protocol": "tcp",
-        "description": "Internal message queues"
+        "description": "Message queue management"
       }
     ]
   },

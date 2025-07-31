@@ -208,7 +208,7 @@ class Step3_NetworkSecurity(BaseHardeningTool):
 - `configure_ufw_defaults()` - Set default policies
 - `configure_essential_ports()` - Configure SSH, NTP
 - `configure_k3s_ports()` - Configure cluster ports
-- `configure_outsight_ports()` - Configure solution ports
+- `configure_application_ports()` - Configure application ports
 - `enable_ufw()` - Activate firewall
 - `disable_unused_services()` - Disable unnecessary services
 - `verify_firewall_configuration()` - Validate setup

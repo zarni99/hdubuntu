@@ -91,7 +91,7 @@ echo "STEP 2: USER AND SSH HARDENING VERIFICATION"
 echo "============================================================"
 
 # Check if required users exist
-for user in outsight cableman cag; do
+for user in admin1 admin2 admin3; do
     check_status "User '$user' exists" "id $user" "success"
 done
 

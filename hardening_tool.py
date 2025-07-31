@@ -2,10 +2,9 @@
 """
 Ubuntu Server Hardening Tool - Main Entry Point
 CIS Benchmark Compliance Tool for Ubuntu 22.04 LTS
-CAG/Changi Airport Group Requirements
 
 Author: Security Team
-Version: 1.3.0
+Version: 2.0.0
 Profile: Level 1 - Server
 """
 
@@ -58,7 +57,7 @@ Examples:
                        help="Preview changes without executing them")
     parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR"], 
                        default="INFO", help="Set logging level")
-    parser.add_argument("--version", action="version", version="Ubuntu Hardening Tool 1.3.0")
+    parser.add_argument("--version", action="version", version="Ubuntu Hardening Tool 2.0.0")
     
     args = parser.parse_args()
     

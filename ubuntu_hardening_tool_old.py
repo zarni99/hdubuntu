@@ -2,7 +2,6 @@
 """
 Ubuntu Server Hardening Tool
 CIS Benchmark Compliance Tool for Ubuntu 22.04 LTS
-CAG/Changi Airport Group Requirements
 
 Author: Security Team
 Version: 1.0.0

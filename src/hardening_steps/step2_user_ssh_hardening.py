@@ -25,22 +25,22 @@ class Step2_UserSSHHardening(BaseHardeningTool):
         """2.1 Create non-root users with appropriate groups"""
         self.logger.info("2.1 Creating and configuring users...")
         
-        # Default users from CAG requirements
+        # Default users configuration
         default_users = [
             {
-                "username": "outsight",
+                "username": "admin1",
                 "groups": ["sudo"],
-                "description": "Install and configure software stack, Level 3 troubleshooting"
+                "description": "System administrator with sudo privileges"
             },
             {
-                "username": "cableman", 
+                "username": "admin2", 
                 "groups": ["sudo"],
-                "description": "Server installation & administration, security update, audit, Level 1&2 troubleshooting"
+                "description": "System administrator with sudo privileges"
             },
             {
-                "username": "cag",
+                "username": "admin3",
                 "groups": [],
-                "description": "Audit user"
+                "description": "Standard user account"
             }
         ]
         
@@ -129,7 +129,7 @@ class Step2_UserSSHHardening(BaseHardeningTool):
         }
         
         # Get allowed users from config
-        allowed_users = self.config.get("ssh_allowed_users", ["outsight", "cableman", "cag"])
+        allowed_users = self.config.get("ssh_allowed_users", ["admin1", "admin2", "admin3"])
         if allowed_users:
             ssh_settings["AllowUsers"] = " ".join(allowed_users)
         

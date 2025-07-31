@@ -15,11 +15,11 @@ else
 fi
 
 echo
-echo "=== CAG User Requirements ==="
+echo "=== User Requirements ==="
 echo "This step will create the following users:"
-echo "  • outsight  - sudo group - Install and configure software stack, Level 3 troubleshooting"
-echo "  • cableman - sudo group - Server installation & administration, security update, audit, Level 1&2 troubleshooting"
-echo "  • cag       - regular user - Audit"
+echo "  • admin1  - sudo group - System administrator with sudo privileges"
+echo "  • admin2  - sudo group - System administrator with sudo privileges"
+echo "  • admin3  - regular user - Standard user account"
 echo
 
 echo "=== SSH Hardening Configuration ==="
@@ -30,7 +30,7 @@ echo "  • PermitEmptyPasswords no"
 echo "  • ChallengeResponseAuthentication no"
 echo "  • UsePAM yes"
 echo "  • X11Forwarding no"
-echo "  • AllowUsers outsight cableman cag"
+echo "  • AllowUsers admin1 admin2 admin3"
 echo "  • Login banner creation"
 echo
 

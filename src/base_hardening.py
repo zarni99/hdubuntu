@@ -61,22 +61,22 @@ class BaseHardeningTool:
             "dry_run": False,
             "users": [
                 {
-                    "username": "outsight",
+                    "username": "admin1",
                     "groups": ["sudo"],
-                    "description": "Install and configure software stack, Level 3 troubleshooting"
+                    "description": "System administrator with sudo privileges"
                 },
                 {
-                    "username": "cableman", 
+                    "username": "admin2", 
                     "groups": ["sudo"],
-                    "description": "Server installation & administration, security update, audit, Level 1&2 troubleshooting"
+                    "description": "System administrator with sudo privileges"
                 },
                 {
-                    "username": "cag",
+                    "username": "admin3",
                     "groups": [],
-                    "description": "Audit user"
+                    "description": "Standard user account"
                 }
             ],
-            "ssh_allowed_users": ["outsight", "cableman", "cag"]
+            "ssh_allowed_users": ["admin1", "admin2", "admin3"]
         }
         
         if config_file and os.path.exists(config_file):

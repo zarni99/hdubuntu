@@ -1,6 +1,6 @@
 # 🔒 Ubuntu Server Hardening Tool
 
-A comprehensive, modular Ubuntu 22.04 LTS server hardening tool based on **CIS Level 1 - Server** benchmarks and **CAG (Changi Airport Group)** requirements.
+A comprehensive, modular Ubuntu 22.04 LTS server hardening tool based on **CIS Level 1 - Server** benchmarks.
 
 ## 📋 Features
 
@@ -116,12 +116,12 @@ The tool uses a JSON configuration file to customize hardening settings. The def
       "description": "Cable management user"
     },
     {
-      "username": "cag",
+      "username": "admin",
       "groups": ["users"],
-      "description": "CAG standard user"
+      "description": "Standard admin user"
     }
   ],
-  "ssh_allowed_users": ["outsight", "cableman", "cag"],
+  "ssh_allowed_users": ["outsight", "cableman", "admin"],
   "step3": {
     "configure_firewall": true,
     "disable_unused_services": true
@@ -288,12 +288,12 @@ The tool uses JSON configuration files. Key options include:
       "description": "Server installation & administration, security update, audit, Level 1&2 troubleshooting"
     },
     {
-      "username": "cag",
+      "username": "admin",
       "groups": [],
       "description": "Audit user"
     }
   ],
-  "ssh_allowed_users": ["outsight", "cableman", "cag"]
+  "ssh_allowed_users": ["outsight", "cableman", "admin"]
 }
 ```
 
@@ -367,7 +367,7 @@ make clean
 ### Step 2: User and SSH Hardening ✅
 **CIS Controls**: 5.1.x, 5.2.x, 5.3.x, 5.4.x
 
-- **User Management**: Create CAG-specific user accounts (outsight, cableman, cag)
+- **User Management**: Create system user accounts (outsight, cableman, admin)
 - **Group Assignment**: Proper sudo and regular user group assignments
 - **SSH Hardening**: Comprehensive SSH security configuration
 - **Access Control**: SSH user restrictions and login banner
@@ -428,14 +428,6 @@ make clean
 ### Recovery:
 
 If issues occur, use the backup files created in `/var/backups/hardening_tool/` to restore original configurations.
-
-## 📞 Support
-
-For CAG-specific requirements or issues, consult your security team or system administrators.
-
-## 📄 License
-
-This tool is designed for internal use within CAG/Changi Airport Group infrastructure.
 
 ---
 

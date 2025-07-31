@@ -12,7 +12,7 @@ echo "This demo showcases the firewall and network security hardening features:"
 echo "• UFW (Uncomplicated Firewall) configuration"
 echo "• Essential ports (SSH, NTP)"
 echo "• K3s cluster ports (6443, 8472, 10250)"
-echo "• Outsight solution-specific ports"
+echo "• Application-specific ports"
 echo "• Disabling unused networking services"
 echo
 
@@ -51,15 +51,15 @@ echo "  • 8472/udp - Flannel VXLAN"
 echo "  • 10250/tcp - Kubelet metrics"
 echo
 
-echo "Outsight Solution Ports:"
-echo "  • 80, 443/tcp - Web interface (HTTP/HTTPS)"
-echo "  • 2379-2380/tcp - Cluster control plane"
-echo "  • 5000, 5001/tcp - Software monitoring & registry"
-echo "  • 53/udp - Core DNS"
-echo "  • 11100-11130/tcp - Tracking data stream"
-echo "  • 9090, 9091, 9273/tcp - Software monitoring"
-echo "  • 10050, 10051/tcp - Hardware monitoring"
-echo "  • 5672, 15672/tcp - Internal message queues"
+echo "Application Ports:"
+echo "  • 80, 443/tcp - Web services (HTTP/HTTPS)"
+echo "  • 2379-2380/tcp - Database cluster"
+echo "  • 5000, 5001/tcp - Application monitoring & registry"
+echo "  • 53/udp - DNS service"
+echo "  • 11100-11130/tcp - Data stream service"
+echo "  • 9090, 9091, 9273/tcp - Monitoring services"
+echo "  • 10050, 10051/tcp - System monitoring"
+echo "  • 5672, 15672/tcp - Message queue services"
 echo
 
 echo "Disabled Services:"
