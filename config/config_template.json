@@ -32,12 +32,14 @@
     {
       "username": "admin1",
       "groups": ["sudo"],
-      "description": "System administrator with sudo privileges"
+      "description": "System administrator with sudo privileges",
+      "password": "SecurePassword123!"
     },
     {
       "username": "admin2",
       "groups": ["sudo"],
-      "description": "System administrator with sudo privileges"
+      "description": "System administrator with sudo privileges",
+      "password": "AnotherSecure456@"
     },
     {
       "username": "admin3",

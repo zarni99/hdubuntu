@@ -72,6 +72,17 @@ class Step2_UserSSHHardening(BaseHardeningTool):
                         self.logger.error(f"Failed to create user {username}: {stderr}")
                         return False
                     self.logger.info(f"Created user: {username}")
+                    
+                    # Set up password if specified in config
+                    if user_info.get("password"):
+                        password = user_info["password"]
+                        returncode, _, stderr = self.run_command(f"echo '{username}:{password}' | chpasswd")
+                        if returncode != 0:
+                            self.logger.error(f"Failed to set password for {username}: {stderr}")
+                            return False
+                        self.logger.info(f"Password set for user: {username}")
+                    else:
+                        self.logger.info(f"No password specified for {username} - using key-based authentication only")
                 
                 # Add user to groups
                 for group in groups:
@@ -112,10 +123,9 @@ class Step2_UserSSHHardening(BaseHardeningTool):
         ssh_config_file = "/etc/ssh/sshd_config"
         self.backup_file(ssh_config_file)
         
-        # SSH hardening settings based on CAG requirements
+        # SSH hardening settings
         ssh_settings = {
             "PermitRootLogin": "no",
-            "PasswordAuthentication": "no", 
             "PermitEmptyPasswords": "no",
             "ChallengeResponseAuthentication": "no",
             "UsePAM": "yes",
@@ -127,6 +137,18 @@ class Step2_UserSSHHardening(BaseHardeningTool):
             "LoginGraceTime": "60",
             "Banner": "/etc/issue.net"
         }
+        
+        # Check if any users have passwords configured
+        users_config = self.config.get("users", [])
+        has_passwords = any(user.get("password") for user in users_config)
+        
+        # Configure password authentication based on whether passwords are set
+        if has_passwords:
+            ssh_settings["PasswordAuthentication"] = "yes"
+            self.logger.info("Password authentication enabled - users have passwords configured")
+        else:
+            ssh_settings["PasswordAuthentication"] = "no"
+            self.logger.info("Password authentication disabled - using key-based authentication only")
         
         # Get allowed users from config
         allowed_users = self.config.get("ssh_allowed_users", ["admin1", "admin2", "admin3"])
