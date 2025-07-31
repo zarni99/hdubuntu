@@ -5,7 +5,7 @@ CIS Benchmark Compliance Tool for Ubuntu 22.04 LTS
 CAG/Changi Airport Group Requirements
 
 Author: Security Team
-Version: 1.2.0
+Version: 1.3.0
 Profile: Level 1 - Server
 """
 
@@ -20,6 +20,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from hardening_steps.step1_os_hardening import Step1_OSHardening
 from hardening_steps.step2_user_ssh_hardening import Step2_UserSSHHardening
 from hardening_steps.step3_network_security import Step3_NetworkSecurity
+from hardening_steps.step4_kernel_sysctl_hardening import Step4_KernelSysctlHardening
 
 
 def main():
@@ -31,9 +32,10 @@ Examples:
   %(prog)s --step1                    # Run Step 1: OS Hardening
   %(prog)s --step2                    # Run Step 2: User & SSH Hardening
   %(prog)s --step3                    # Run Step 3: Network Security
-  %(prog)s --step1 --step2 --step3    # Run all steps
+  %(prog)s --step4                    # Run Step 4: Kernel & Sysctl Hardening
+  %(prog)s --step1 --step2 --step3 --step4  # Run all steps
   %(prog)s --step1 --dry-run         # Preview Step 1 changes
-  %(prog)s --step3 --config config/custom.json  # Use custom configuration
+  %(prog)s --step4 --config config/custom.json  # Use custom configuration
   %(prog)s --step1 --log-level DEBUG # Verbose logging
         """
     )
@@ -44,17 +46,19 @@ Examples:
                        help="Execute Step 2: User and SSH Hardening")
     parser.add_argument("--step3", action="store_true", 
                        help="Execute Step 3: Firewall and Network Security")
+    parser.add_argument("--step4", action="store_true", 
+                       help="Execute Step 4: Kernel and Sysctl Hardening")
     parser.add_argument("--config", type=str, 
                        help="Path to configuration file (JSON format)")
     parser.add_argument("--dry-run", action="store_true", 
                        help="Preview changes without executing them")
     parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR"], 
                        default="INFO", help="Set logging level")
-    parser.add_argument("--version", action="version", version="Ubuntu Hardening Tool 1.2.0")
+    parser.add_argument("--version", action="version", version="Ubuntu Hardening Tool 1.3.0")
     
     args = parser.parse_args()
     
-    if not any([args.step1, args.step2, args.step3]):
+    if not any([args.step1, args.step2, args.step3, args.step4]):
         parser.print_help()
         sys.exit(1)
     
@@ -130,6 +134,27 @@ Examples:
             else:
                 print("✗ Step 3 completed with errors.")
         
+        if args.step4:
+            print("\n" + "=" * 60)
+            print("EXECUTING STEP 4: KERNEL AND SYSCTL HARDENING")
+            print("=" * 60)
+            
+            tool = Step4_KernelSysctlHardening(config_file=args.config, log_level=args.log_level)
+            if args.dry_run:
+                tool.config["dry_run"] = True
+                
+            success = tool.execute()
+            overall_success = overall_success and success
+            
+            # Save results
+            results_file = tool.save_results("step4")
+            results_files.append(results_file)
+            
+            if success:
+                print("✓ Step 4 completed successfully!")
+            else:
+                print("✗ Step 4 completed with errors.")
+        
         # Final summary
         print("\n" + "=" * 60)
         print("HARDENING SUMMARY")
@@ -148,6 +173,10 @@ Examples:
                 print("\n🔥 IMPORTANT: Firewall has been enabled and configured.")
                 print("   Verify network connectivity and allowed services.")
                 print("   Check UFW status: sudo ufw status verbose")
+            if args.step4 and not args.dry_run:
+                print("\n⚙️  IMPORTANT: Kernel parameters have been modified.")
+                print("   System reboot may be required for all changes to take effect.")
+                print("   Verify sysctl settings: sudo sysctl -a | grep -E '(net|kernel|fs)'")
             sys.exit(0)
         else:
             print("✗ Some hardening steps completed with errors. Check logs for details.")

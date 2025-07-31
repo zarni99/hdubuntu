@@ -7,8 +7,9 @@ A comprehensive, modular Ubuntu 22.04 LTS server hardening tool based on **CIS L
 - ✅ **Step 1**: Operating System Hardening (System updates, timezone, NTP)
 - ✅ **Step 2**: User and SSH Hardening (User management, SSH security)
 - ✅ **Step 3**: Firewall and Network Security (UFW configuration, port management)
-- 🔄 **Step 4**: Access Control and Auditing (Coming Soon)
-- 🔄 **Step 5**: System Monitoring and Logging (Coming Soon)
+- ✅ **Step 4**: Kernel and Sysctl Hardening (Network parameters, kernel security)
+- 🔄 **Step 5**: Access Control and Auditing (Coming Soon)
+- 🔄 **Step 6**: System Monitoring and Logging (Coming Soon)
 
 ## 🏗️ Project Structure
 
@@ -40,6 +41,7 @@ make dry-run
 sudo make step1    # OS Hardening
 sudo make step2    # User & SSH Hardening
 sudo make step3    # Firewall & Network Security
+sudo make step4    # Kernel & Sysctl Hardening
 sudo make all-steps # All steps
 
 # Other useful commands
@@ -52,7 +54,7 @@ make clean         # Clean up logs
 ### Direct Script Usage
 ```bash
 # Preview changes (dry-run mode)
-./hardening_tool.py --step1 --step2 --step3 --dry-run
+./hardening_tool.py --step1 --step2 --step3 --step4 --dry-run
 
 # Run Step 1: OS Hardening
 sudo ./hardening_tool.py --step1
@@ -63,11 +65,14 @@ sudo ./hardening_tool.py --step2
 # Run Step 3: Firewall & Network Security
 sudo ./hardening_tool.py --step3
 
+# Run Step 4: Kernel & Sysctl Hardening
+sudo ./hardening_tool.py --step4
+
 # Run all steps with custom config
-sudo ./hardening_tool.py --step1 --step2 --step3 --config config/custom.json
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --config config/custom.json
 
 # Verbose logging
-sudo ./hardening_tool.py --step1 --step2 --step3 --log-level DEBUG
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --log-level DEBUG
 ```
 
 ## ⚙️ Configuration
@@ -111,6 +116,11 @@ The tool uses a JSON configuration file to customize hardening settings. The def
     "configure_firewall": true,
     "disable_unused_services": true
   },
+  "step4": {
+    "configure_sysctl": true,
+    "apply_sysctl": true,
+    "verify_sysctl": true
+  },
   "firewall": {
     "default_incoming": "deny",
     "default_outgoing": "allow",
@@ -123,7 +133,19 @@ The tool uses a JSON configuration file to customize hardening settings. The def
       "5672/tcp", "15672/tcp"
     ]
   },
-  "disable_services": ["avahi-daemon", "cups", "bluetooth"]
+  "disable_services": ["avahi-daemon", "cups", "bluetooth"],
+  "sysctl": {
+    "parameters": {
+      "net.ipv4.ip_forward": "1",
+      "net.ipv4.conf.all.rp_filter": "1",
+      "net.ipv4.conf.all.accept_source_route": "0",
+      "net.ipv6.conf.all.disable_ipv6": "1",
+      "kernel.kptr_restrict": "1",
+      "kernel.dmesg_restrict": "1",
+      "fs.protected_hardlinks": "1",
+      "fs.protected_symlinks": "1"
+    }
+  }
 }
 ```
 
@@ -136,7 +158,7 @@ cp config/config_template.json config/my_config.json
 nano config/my_config.json
 
 # Use your custom configuration
-sudo ./hardening_tool.py --step1 --step2 --step3 --config config/my_config.json
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --config config/my_config.json
 ```
 
 ## 📁 Project Structure
@@ -197,7 +219,8 @@ The tool uses JSON configuration files. Key options include:
 results/
 ├── step1_results_20250130_143022.json
 ├── step2_results_20250130_143022.json
-└── step3_results_20250130_143022.json
+├── step3_results_20250130_143022.json
+└── step4_results_20250130_143022.json
 
 logs/
 ├── hardening_20250130_143022.log
@@ -215,13 +238,13 @@ logs/
 
 ## 🔄 Planned Extensions
 
-### Step 4: Access Control and Auditing (Coming Soon)
+### Step 5: Access Control and Auditing (Coming Soon)
 - Enhanced user account policies
 - Audit system configuration (auditd)
 - File permission hardening
 - Login and authentication controls
 
-### Step 5: System Monitoring and Logging (Coming Soon)
+### Step 6: System Monitoring and Logging (Coming Soon)
 - Enhanced logging configuration
 - Log rotation and retention
 - System monitoring setup
@@ -279,6 +302,17 @@ make clean
 - **Outsight Ports**: Web interface, monitoring, message queues, DNS
 - **Service Hardening**: Disable unused services (avahi-daemon, cups, bluetooth)
 
+### Step 4: Kernel and Sysctl Hardening ✅
+**CIS Controls**: 3.1.x, 3.2.x, 3.3.x, 3.4.x
+
+- **Network Parameter Hardening**: IPv4/IPv6 forwarding, source routing, redirects
+- **Kernel Security Settings**: Pointer restriction, dmesg access control
+- **File System Protections**: Hardlink and symlink protection
+- **IPv6 Configuration**: Disable IPv6 if not required
+- **Kubernetes Compatibility**: Optimized for K3s cluster environments
+- **Memory Management**: Enhanced security for memory operations
+- **Network Security**: Protection against various network attacks
+
 ## ⚠️ Important Notes
 
 - **Always test in a non-production environment first**
@@ -310,8 +344,8 @@ This tool is designed for internal use within CAG/Changi Airport Group infrastru
 
 ---
 
-**Version**: 1.1.0  
+**Version**: 1.3.0  
 **Last Updated**: 2024  
 **Compatibility**: Ubuntu 22.04 LTS  
 **Profile**: CIS Level 1 - Server  
-**Features**: Step 1 (OS Hardening) + Step 2 (User & SSH Hardening)
+**Features**: Step 1 (OS Hardening) + Step 2 (User & SSH Hardening) + Step 3 (Firewall & Network Security) + Step 4 (Kernel & Sysctl Hardening)

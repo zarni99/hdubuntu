@@ -1,7 +1,7 @@
 # Ubuntu Server Hardening Tool - Makefile
 # CIS Benchmark Compliance Tool for Ubuntu 22.04 LTS
 
-.PHONY: help install test clean demo step1 step2 step3 all-steps dry-run
+.PHONY: help install test clean demo step1 step2 step3 step4 all-steps dry-run
 
 # Default target
 help:
@@ -15,6 +15,7 @@ help:
 	@echo "  make step1       - Run Step 1: OS Hardening (requires sudo)"
 	@echo "  make step2       - Run Step 2: User & SSH Hardening (requires sudo)"
 	@echo "  make step3       - Run Step 3: Firewall & Network Security (requires sudo)"
+	@echo "  make step4       - Run Step 4: Kernel & Sysctl Hardening (requires sudo)"
 	@echo "  make all-steps   - Run all hardening steps (requires sudo)"
 	@echo "  make dry-run     - Preview all changes without executing"
 	@echo ""
@@ -32,7 +33,7 @@ install:
 # Run tests and validation
 test:
 	@echo "Running tool validation..."
-	@python3 -c "import sys; sys.path.append('src'); from hardening_steps import Step1_OSHardening, Step2_UserSSHHardening, Step3_NetworkSecurity; print('✓ All modules imported successfully')"
+	@python3 -c "import sys; sys.path.append('src'); from hardening_steps import Step1_OSHardening, Step2_UserSSHHardening, Step3_NetworkSecurity, Step4_KernelSysctlHardening; print('✓ All modules imported successfully')"
 	@./hardening_tool.py --help > /dev/null && echo "✓ Main script is functional"
 	@echo "✓ All tests passed!"
 
@@ -42,6 +43,8 @@ demo:
 	@./demos/test_demo.sh
 	@echo ""
 	@./demos/step2_demo.sh
+	@echo ""
+	@./demos/step4_demo.sh
 	@echo ""
 	@./demos/modular_demo.sh
 
@@ -69,15 +72,20 @@ step3:
 	@echo "Running Step 3: Firewall and Network Security..."
 	@sudo ./hardening_tool.py --step3
 
+# Run Step 4: Kernel & Sysctl Hardening (requires sudo)
+step4:
+	@echo "Running Step 4: Kernel and Sysctl Hardening..."
+	@sudo ./hardening_tool.py --step4
+
 # Run all hardening steps (requires sudo)
 all-steps:
 	@echo "Running all hardening steps..."
-	@sudo ./hardening_tool.py --step1 --step2 --step3
+	@sudo ./hardening_tool.py --step1 --step2 --step3 --step4
 
 # Preview all changes without executing
 dry-run:
 	@echo "Previewing all hardening changes (dry-run mode)..."
-	@./hardening_tool.py --step1 --step2 --step3 --dry-run --log-level INFO
+	@./hardening_tool.py --step1 --step2 --step3 --step4 --dry-run --log-level INFO
 
 # Development targets
 dev-setup:

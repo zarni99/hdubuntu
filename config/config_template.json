@@ -17,6 +17,11 @@
     "configure_firewall": true,
     "disable_unused_services": true
   },
+  "step4": {
+    "configure_sysctl": true,
+    "apply_sysctl": true,
+    "verify_sysctl": true
+  },
   "users": [
     {
       "username": "outsight",
@@ -145,6 +150,20 @@
     "cups",
     "bluetooth"
   ],
+  "sysctl": {
+    "parameters": {
+      "net.ipv4.ip_forward": "1",
+      "net.ipv4.conf.all.rp_filter": "1",
+      "net.ipv4.conf.default.rp_filter": "1",
+      "net.ipv4.conf.all.accept_source_route": "0",
+      "net.ipv6.conf.all.disable_ipv6": "1",
+      "net.ipv6.conf.default.disable_ipv6": "1",
+      "kernel.kptr_restrict": "1",
+      "kernel.dmesg_restrict": "1",
+      "fs.protected_hardlinks": "1",
+      "fs.protected_symlinks": "1"
+    }
+  },
   "cis_profile": "Level 1 - Server",
   "organization": "CAG/Changi Airport Group",
   "compliance_requirements": [
