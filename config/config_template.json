@@ -1,0 +1,154 @@
+{
+  "timezone": "UTC",
+  "enable_ntp": true,
+  "enable_unattended_upgrades": true,
+  "backup_configs": true,
+  "dry_run": false,
+  "step1": {
+    "update_system": true,
+    "setup_unattended_upgrades": true,
+    "configure_timezone_ntp": true
+  },
+  "step2": {
+    "create_users": true,
+    "configure_ssh": true
+  },
+  "step3": {
+    "configure_firewall": true,
+    "disable_unused_services": true
+  },
+  "users": [
+    {
+      "username": "outsight",
+      "groups": ["sudo"],
+      "description": "Install and configure software stack, Level 3 troubleshooting"
+    },
+    {
+      "username": "cableman",
+      "groups": ["sudo"],
+      "description": "Server installation & administration, security update, audit, Level 1&2 troubleshooting"
+    },
+    {
+      "username": "cag",
+      "groups": [],
+      "description": "Audit user"
+    }
+  ],
+  "ssh_allowed_users": ["outsight", "cableman", "cag"],
+  "firewall": {
+    "default_incoming": "deny",
+    "default_outgoing": "allow",
+    "essential_ports": [
+      {
+        "port": "ssh",
+        "protocol": "tcp",
+        "description": "SSH remote access"
+      },
+      {
+        "port": "ntp",
+        "protocol": "udp",
+        "description": "NTP time synchronization"
+      }
+    ],
+    "k3s_ports": [
+      {
+        "port": "6443",
+        "protocol": "tcp",
+        "description": "K3s API server"
+      },
+      {
+        "port": "8472",
+        "protocol": "udp",
+        "description": "Flannel VXLAN"
+      },
+      {
+        "port": "10250",
+        "protocol": "tcp",
+        "description": "Kubelet metrics"
+      }
+    ],
+    "outsight_ports": [
+      {
+        "port": "80",
+        "protocol": "tcp",
+        "description": "Outsight Shift HTTP"
+      },
+      {
+        "port": "443",
+        "protocol": "tcp",
+        "description": "Outsight Shift HTTPS"
+      },
+      {
+        "port": "2379:2380",
+        "protocol": "tcp",
+        "description": "HA configuration database"
+      },
+      {
+        "port": "5001",
+        "protocol": "tcp",
+        "description": "Embedded distributed registry"
+      },
+      {
+        "port": "5000",
+        "protocol": "tcp",
+        "description": "Software monitoring"
+      },
+      {
+        "port": "53",
+        "protocol": "udp",
+        "description": "Core DNS"
+      },
+      {
+        "port": "11100:11130",
+        "protocol": "tcp",
+        "description": "Tracking data stream"
+      },
+      {
+        "port": "9090",
+        "protocol": "tcp",
+        "description": "Software monitoring"
+      },
+      {
+        "port": "9091",
+        "protocol": "tcp",
+        "description": "Software monitoring"
+      },
+      {
+        "port": "9273",
+        "protocol": "tcp",
+        "description": "Software monitoring"
+      },
+      {
+        "port": "10050",
+        "protocol": "tcp",
+        "description": "Hardware monitoring"
+      },
+      {
+        "port": "10051",
+        "protocol": "tcp",
+        "description": "Hardware monitoring"
+      },
+      {
+        "port": "5672",
+        "protocol": "tcp",
+        "description": "Internal message queues"
+      },
+      {
+        "port": "15672",
+        "protocol": "tcp",
+        "description": "Internal message queues"
+      }
+    ]
+  },
+  "disable_services": [
+    "avahi-daemon",
+    "cups",
+    "bluetooth"
+  ],
+  "cis_profile": "Level 1 - Server",
+  "organization": "CAG/Changi Airport Group",
+  "compliance_requirements": [
+    "CIS Ubuntu 22.04 LTS Benchmark",
+    "CAG On-premise Server Requirements"
+  ]
+}

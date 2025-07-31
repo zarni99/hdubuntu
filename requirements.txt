@@ -1,0 +1,20 @@
+# Ubuntu Server Hardening Tool Requirements
+# Python 3.8+ required
+
+# Core dependencies (usually available in Ubuntu 22.04 by default)
+# No external Python packages required for Step 1
+
+# System packages that will be installed by the tool:
+# - unattended-upgrades
+# - systemd (for timedatectl)
+
+# Future steps may require:
+# - ufw (firewall)
+# - auditd (auditing)
+# - fail2ban (intrusion prevention)
+# - aide (file integrity monitoring)
+
+# Development/Testing dependencies (optional)
+pytest>=7.0.0
+black>=22.0.0
+flake8>=4.0.0
