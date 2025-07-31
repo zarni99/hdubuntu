@@ -8,8 +8,8 @@ A comprehensive, modular Ubuntu 22.04 LTS server hardening tool based on **CIS L
 - ✅ **Step 2**: User and SSH Hardening (User management, SSH security)
 - ✅ **Step 3**: Firewall and Network Security (UFW configuration, port management)
 - ✅ **Step 4**: Kernel and Sysctl Hardening (Network parameters, kernel security)
-- 🔄 **Step 5**: Access Control and Auditing (Coming Soon)
-- 🔄 **Step 6**: System Monitoring and Logging (Coming Soon)
+- ✅ **Step 5**: Auditing and Logging (Auditd configuration, system monitoring)
+- 🔍 **Verification System**: Automated and manual verification of all hardening measures
 
 ## 🏗️ Project Structure
 
@@ -42,7 +42,11 @@ sudo make step1    # OS Hardening
 sudo make step2    # User & SSH Hardening
 sudo make step3    # Firewall & Network Security
 sudo make step4    # Kernel & Sysctl Hardening
+sudo make step5    # Auditing & Logging
 sudo make all-steps # All steps
+
+# Verify hardening measures
+make verify        # Automated verification of all steps
 
 # Other useful commands
 make help          # Show all available commands
@@ -54,7 +58,7 @@ make clean         # Clean up logs
 ### Direct Script Usage
 ```bash
 # Preview changes (dry-run mode)
-./hardening_tool.py --step1 --step2 --step3 --step4 --dry-run
+./hardening_tool.py --step1 --step2 --step3 --step4 --step5 --dry-run
 
 # Run Step 1: OS Hardening
 sudo ./hardening_tool.py --step1
@@ -68,11 +72,17 @@ sudo ./hardening_tool.py --step3
 # Run Step 4: Kernel & Sysctl Hardening
 sudo ./hardening_tool.py --step4
 
+# Run Step 5: Auditing & Logging
+sudo ./hardening_tool.py --step5
+
 # Run all steps with custom config
-sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --config config/custom.json
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --step5 --config config/custom.json
 
 # Verbose logging
-sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --log-level DEBUG
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --step5 --log-level DEBUG
+
+# Verify all hardening measures
+./verify_hardening.sh
 ```
 
 ## ⚙️ Configuration
@@ -121,6 +131,22 @@ The tool uses a JSON configuration file to customize hardening settings. The def
     "apply_sysctl": true,
     "verify_sysctl": true
   },
+  "step5": {
+    "install_auditd": true,
+    "configure_auditd": true,
+    "configure_rsyslog": true,
+    "enable_services": true,
+    "auditd": {
+      "max_log_file": 50,
+      "num_logs": 5,
+      "space_left_action": "email",
+      "action_mail_acct": "root",
+      "admin_space_left_action": "halt",
+      "max_log_file_action": "rotate",
+      "disk_full_action": "halt",
+      "disk_error_action": "halt"
+    }
+  },
   "firewall": {
     "default_incoming": "deny",
     "default_outgoing": "allow",
@@ -158,16 +184,85 @@ cp config/config_template.json config/my_config.json
 nano config/my_config.json
 
 # Use your custom configuration
-sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --config config/my_config.json
+sudo ./hardening_tool.py --step1 --step2 --step3 --step4 --step5 --config config/my_config.json
 ```
+
+## 🔍 Verification System
+
+The tool includes a comprehensive verification system to ensure all hardening measures have been properly applied.
+
+### Automated Verification
+```bash
+# Run automated verification script
+./verify_hardening.sh
+
+# Or use make command
+make verify
+```
+
+### Manual Verification
+For detailed manual verification steps, see the <mcfile name="VERIFICATION_GUIDE.md" path="docs/VERIFICATION_GUIDE.md"></mcfile>.
+
+#### Quick Manual Checks
+```bash
+# Step 1: OS Hardening
+timedatectl status
+apt list --upgradable
+
+# Step 2: User & SSH
+sudo sshd -T | grep -E '(permitrootlogin|passwordauthentication)'
+systemctl status ssh
+
+# Step 3: Firewall
+sudo ufw status verbose
+ss -tuln
+
+# Step 4: Kernel/Sysctl
+sysctl net.ipv4.ip_forward
+cat /etc/sysctl.d/99-hardening.conf
+
+# Step 5: Auditing
+systemctl status auditd
+sudo auditctl -l
+sudo ausearch -ts today
+```
+
+### Verification Output
+- 🟢 **Green ✓ PASS** - Hardening measure properly applied
+- 🔴 **Red ✗ FAIL** - Hardening measure needs attention
+- 📊 **Summary** - Total checks and pass/fail counts
 
 ## 📁 Project Structure
 
 ```
-ubuntu_hardening_tool.py    # Main hardening tool
-config_template.json        # Configuration template
-requirements.txt            # Python dependencies
-README.md                   # This file
+ubuntu-hardening-tool/
+├── hardening_tool.py              # Main entry point
+├── Makefile                       # Project management
+├── verify_hardening.sh            # Automated verification script
+├── config/
+│   └── config_template.json       # Configuration template
+├── src/                          # Modular source code
+│   ├── base_hardening.py         # Base classes
+│   └── hardening_steps/          # Individual step modules
+│       ├── step1_os_hardening.py
+│       ├── step2_user_ssh_hardening.py
+│       ├── step3_network_security.py
+│       ├── step4_kernel_sysctl_hardening.py
+│       └── step5_auditing_logging.py
+├── demos/                        # Demo scripts
+│   ├── step2_demo.sh
+│   ├── step3_demo.sh
+│   ├── step4_demo.sh
+│   ├── step5_demo.sh
+│   └── modular_demo.sh
+├── docs/                         # Documentation
+│   ├── PROJECT_STRUCTURE.md
+│   ├── STEP3_IMPLEMENTATION.md
+│   ├── STEP4_IMPLEMENTATION.md
+│   └── VERIFICATION_GUIDE.md
+├── logs/                         # Runtime logs
+├── results/                      # Execution results
+└── requirements.txt              # Python dependencies
 ```
 
 ## 🔧 Configuration Options
@@ -236,20 +331,6 @@ logs/
 - **Privilege Checking**: Ensures proper permissions before execution
 - **Modular Design**: Easy to extend and maintain
 
-## 🔄 Planned Extensions
-
-### Step 5: Access Control and Auditing (Coming Soon)
-- Enhanced user account policies
-- Audit system configuration (auditd)
-- File permission hardening
-- Login and authentication controls
-
-### Step 6: System Monitoring and Logging (Coming Soon)
-- Enhanced logging configuration
-- Log rotation and retention
-- System monitoring setup
-- Intrusion detection (fail2ban)
-
 ## 🛠️ Development
 
 ### Adding New Hardening Steps
@@ -262,14 +343,13 @@ logs/
 ### Project Management
 ```bash
 # Development setup
-make dev-setup
+make install
 
-# Code quality
-make lint
-make format
-
-# Testing
+# Code quality and testing
 make test
+
+# Run demonstrations
+make demo
 
 # Cleanup
 make clean
@@ -313,6 +393,21 @@ make clean
 - **Memory Management**: Enhanced security for memory operations
 - **Network Security**: Protection against various network attacks
 
+### Step 5: Auditing and Logging ✅
+**CIS Controls**: 4.1.x, 4.2.x, 4.3.x
+
+- **Auditd Installation**: Linux audit framework installation and configuration
+- **Comprehensive Audit Rules**: Monitor system calls, file access, and authentication
+- **Log Storage Configuration**: Configurable log file size, rotation, and retention
+- **System Monitoring**: Track user/group management, network configuration changes
+- **Authentication Logging**: Monitor login attempts, privilege escalation, and access
+- **File System Auditing**: Monitor critical file and directory access
+- **Kernel Module Monitoring**: Track kernel module loading and unloading
+- **SELinux Integration**: Audit SELinux policy changes and violations
+- **Rsyslog Configuration**: Centralized logging and log forwarding
+- **Log Rotation**: Automated log rotation with configurable policies
+- **Overflow Protection**: Configurable actions for disk space and error conditions
+
 ## ⚠️ Important Notes
 
 - **Always test in a non-production environment first**
@@ -344,8 +439,14 @@ This tool is designed for internal use within CAG/Changi Airport Group infrastru
 
 ---
 
-**Version**: 1.3.0  
-**Last Updated**: 2024  
+**Version**: 2.0.0  
+**Last Updated**: 2025  
 **Compatibility**: Ubuntu 22.04 LTS  
 **Profile**: CIS Level 1 - Server  
-**Features**: Step 1 (OS Hardening) + Step 2 (User & SSH Hardening) + Step 3 (Firewall & Network Security) + Step 4 (Kernel & Sysctl Hardening)
+**Features**: Complete 5-Step Hardening Suite + Automated Verification System
+- ✅ Step 1: OS Hardening
+- ✅ Step 2: User & SSH Hardening  
+- ✅ Step 3: Firewall & Network Security
+- ✅ Step 4: Kernel & Sysctl Hardening
+- ✅ Step 5: Auditing & Logging
+- 🔍 Comprehensive Verification System
